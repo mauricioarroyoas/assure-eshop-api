@@ -1,5 +1,6 @@
 import request from "supertest";
 import app from "../app";
+import { send } from "process";
 
 describe("GET /api/products", () => {
   it("should return a list of products", async () => {
@@ -18,11 +19,13 @@ describe("GET /api/products", () => {
 });
 
 // Post request
-
 describe("POST /api/products/add", () => {
-  it("should return 'Got a post request' and a 200 statuts code", async () =>{
-    const res = await request(app).post("/api/products/add");
-    expect(res.statusCode).toEqual(200);
-    expect(res.text).toEqual("Got a post request");
+  it("should return newProduct and a 201 statuts code", async () =>{
+    const newProduct = {id: 5, name: "Nintendo Switch", price: 510}
+    const res = await request(app).post("/api/products")
+    .send(newProduct);
+
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toEqual(newProduct);
   })
 })
