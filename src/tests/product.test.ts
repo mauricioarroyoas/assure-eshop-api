@@ -16,3 +16,13 @@ describe("GET /api/products", () => {
     // }
   });
 });
+
+// Post request
+
+describe("POST /api/products/add", () => {
+  it("should return 'Got a post request' and a 200 statuts code", async () =>{
+    const res = await request(app).post("/api/products/add");
+    expect(res.statusCode).toEqual(200);
+    expect(res.text).toEqual("Got a post request");
+  })
+})

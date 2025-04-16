@@ -9,3 +9,7 @@ const products = [
 export const getAll = (req: Request, res: Response) => {  
   res.json(products);
 }
+
+export const addProducts = (req: Request, res: Response) => {
+  res.send("Got a post request");
+}
