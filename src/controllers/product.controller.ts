@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Product } from "../entities/Product";
+import { validateProductId } from "../validators/product.validator";
 
 export const getAll = async (req: Request, res: Response) => {
   try {
@@ -31,24 +32,31 @@ export const create = async (req: Request, res: Response) => {
   }
 };
 
-export const getById = async (req: Request, res: Response) => {
+export const getById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const id = parseInt(req.params.id);
+    const { id } = req.params;
 
-    if (isNaN(id)) {
-      res.status(400).json({ error: "Invalid product ID" });
+    // ID validation
+    const validation = validateProductId(id)
+    if (!validation.valid && validation.error) {
+      res.status(validation.error.status).json(validation.error);
+      return;
     }
 
+    // If ID is valid
     const productRepo = AppDataSource.getRepository(Product);
-    const product = await productRepo.findOneBy({ id });
+    const product = await productRepo.findOneBy({ id: validation.id });
 
+    // If no product found
     if (!product) {
       res.status(404).json({ error: "Product not found" });
+      return;
     }
 
     res.json(product);
   } catch (err) {
     console.error("Error fetching product by ID:", err);
     res.status(500).json({ error: "Internal Server Error" });
+
   }
 };
