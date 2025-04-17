@@ -19,5 +19,8 @@ RUN npm run build
 # Expose port your app runs on
 EXPOSE 3000
 
+#for debugger
+EXPOSE 9229
+
 # Run the app (use `npm run dev` for development, `start` for prod)
 CMD ["npm", "run", "dev"]
