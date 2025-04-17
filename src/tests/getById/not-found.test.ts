@@ -1,26 +1,21 @@
 import request from "supertest";
-import app from "../../app";
-import { AppDataSource } from "../../data-source";
+import express from "express";
+import { createGetByIdHandler } from "../../controllers/product.controller";
 
-// 📄 test/product/getById.test.ts
-jest.mock('../../src/data-source', () => ({
-    AppDataSource: {
-      getRepository: jest.fn(() => {
-        AppDataSource: {
-            getRepository: jest.fn(() => ({
-                findOneBy: jest.fn()
-            }))
-        }
-      })
-    }
-  }));
-  
+describe("GET /api/products/:id - Product Not Found", () => {
+  it("Should return 404 if product is not found", async () => {
+    // Create mock repo that returns null (not found)
+    const mockRepo = {
+      findOneBy: jest.fn().mockResolvedValue(null),
+    };
 
-  describe("Get /api/products/:id - Product Not Found", () => {
-    it("Should return 404 if product is not found", async () => {
-        const res = await request(app).get("/api/products/289")
+    const app = express();
+    app.use(express.json());
+    app.get("/api/products/:id", createGetByIdHandler(mockRepo as any));
 
-        expect(res.status).toBe(404);
-        expect(res.body).toBe({error: "Product not found"});
-    })
-  })
+    const res = await request(app).get("/api/products/289");
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ error: "Product not found" });
+  });
+});

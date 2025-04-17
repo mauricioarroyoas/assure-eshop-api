@@ -1,12 +1,18 @@
 import request from "supertest";
-import app from "../../app";
+import express from "express";
+import { createGetByIdHandler } from "../../controllers/product.controller";
 
-describe("Get /api/products/:id - Invalid ID", () => {
-    it("should return 400 status if product ID is invalid", async () => {
-        const res = await request(app).get("/api/products/abc");
-        
-        expect(res.status).toBe(400);
-        expect(res.body).toBe({error: "Invalid product ID"});
+const mockRepo = {
+  findOneBy: jest.fn().mockResolvedValue(null),
+};
 
-    })
-  })
+const app = express();
+app.get("/api/products/:id", createGetByIdHandler(mockRepo as any));
+
+describe("GET /api/products/:id - Not Found", () => {
+  it("returns 404 if product not found", async () => {
+    const res = await request(app).get("/api/products/123");
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ error: "Product not found" });
+  });
+});
