@@ -32,14 +32,15 @@ export const create = async (req: Request, res: Response) => {
   }
 };
 
-export const getById = async (req: Request, res: Response) => {
+export const getById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
 
     // ID validation
     const validation = validateProductId(id)
     if (!validation.valid && validation.error) {
-      return res.status(validation.error.status).json(validation.error);
+      res.status(validation.error.status).json(validation.error);
+      return;
     }
 
     // If ID is valid
@@ -48,12 +49,14 @@ export const getById = async (req: Request, res: Response) => {
 
     // If no product found
     if (!product) {
-     return res.status(404).json({ error: "Product not found" });
+      res.status(404).json({ error: "Product not found" });
+      return;
     }
 
-    return res.json(product);
+    res.json(product);
   } catch (err) {
     console.error("Error fetching product by ID:", err);
-    return res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Internal Server Error" });
+
   }
 };
