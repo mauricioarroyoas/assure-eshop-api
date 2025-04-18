@@ -6,7 +6,7 @@ module.exports = {
   },
   testPathIgnorePatterns: [
     "/node_modules/",
-    "/src/tests/product.test.ts",
+    // "/src/tests/product.test.ts",
     "/src/tests/getById/not-found.test.ts",
     "/src/tests/getById/success.test.ts",
   ],
